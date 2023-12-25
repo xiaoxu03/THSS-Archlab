@@ -1,0 +1,57 @@
+# Execution begins at address 0 
+	.pos 0 
+init:	
+    irmovl Stack, %esp  	# Set up stack pointer  
+	irmovl Stack, %ebp  	# Set up base pointer   
+	call Main		        # Execute main program
+	halt			        # Terminate program 
+
+# Elements defining the stack
+    .align 4
+ele1:
+    .long   0x00a
+    .long   ele2
+ele2:
+    .long   0x0b0
+    .long   ele3
+ele3:
+    .long   0xc00
+    .long   0
+
+Main:
+    pushl   %ebp            # Save old base pointer
+    rrmovl  %esp, %ebp      # Set up new base pointer
+    irmovl  ele1, %edx      # %edx = &ele1
+    pushl   %edx            # ls = &ele1
+    call    Rsum_List       # Sum_List(ele1)
+    rrmovl  %ebp, %esp      # Recovery %esp
+    popl    %ebp            # Recory %ebp
+    ret
+
+    # int rsum_list(list_ptr ls)
+Rsum_List:
+    pushl   %ebp            # Save old base pointer
+    rrmovl  %esp, %ebp      # Set up new base pointer
+    mrmovl  8(%ebp), %ecx   # %ecx = &ls->val
+    xorl    %eax, %eax      # val = 0
+    andl    %ecx, %ecx      # Set condition codes
+    je      End             # Return if 
+    mrmovl  (%ecx), %eax    # %eax = ls->val
+    pushl   %eax            # Save val in stack
+    irmovl  $4, %ebx        # %ebx = 4
+    addl    %ebx, %ecx      # %ecx = &ls->next
+    mrmovl  (%ecx), %edx    # %edx = ls->next
+    rrmovl  %edx, %ecx      # %ecx = ls->next
+    pushl   %ecx            # ls = ls->next
+    call    Rsum_List       # Call Rsum_List(ls->next);
+    popl    %ebx            # Clear ls->next from stack
+    popl    %ebx            # %ebx = ls->val
+    addl    %ebx, %eax      # %eax = val + rest
+End:
+    rrmovl  %ebp, %esp      # Recovery %esp
+    popl    %ebp            # Recory %ebp
+    ret                     # Return
+
+# The stack starts here and grows to lower addresses
+	.pos 0x100		
+Stack:	 

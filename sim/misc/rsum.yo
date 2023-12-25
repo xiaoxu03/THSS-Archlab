@@ -1,0 +1,57 @@
+                      | # Execution begins at address 0 
+  0x000:              | 	.pos 0 
+  0x000:              | init:	
+  0x000: 30f400010000 |     irmovl Stack, %esp  	# Set up stack pointer  
+  0x006: 30f500010000 | 	irmovl Stack, %ebp  	# Set up base pointer   
+  0x00c: 802c000000   | 	call Main		        # Execute main program
+  0x011: 00           | 	halt			        # Terminate program 
+                      | 
+                      | # Elements defining the stack
+  0x014:              |     .align 4
+  0x014:              | ele1:
+  0x014: 0a000000     |     .long   0x00a
+  0x018: 1c000000     |     .long   ele2
+  0x01c:              | ele2:
+  0x01c: b0000000     |     .long   0x0b0
+  0x020: 24000000     |     .long   ele3
+  0x024:              | ele3:
+  0x024: 000c0000     |     .long   0xc00
+  0x028: 00000000     |     .long   0
+                      | 
+  0x02c:              | Main:
+  0x02c: a05f         |     pushl   %ebp            # Save old base pointer
+  0x02e: 2045         |     rrmovl  %esp, %ebp      # Set up new base pointer
+  0x030: 30f214000000 |     irmovl  ele1, %edx      # %edx = &ele1
+  0x036: a02f         |     pushl   %edx            # ls = &ele1
+  0x038: 8042000000   |     call    Rsum_List       # Sum_List(ele1)
+  0x03d: 2054         |     rrmovl  %ebp, %esp      # Recovery %esp
+  0x03f: b05f         |     popl    %ebp            # Recory %ebp
+  0x041: 90           |     ret
+                      | 
+                      |     # int rsum_list(list_ptr ls)
+  0x042:              | Rsum_List:
+  0x042: a05f         |     pushl   %ebp            # Save old base pointer
+  0x044: 2045         |     rrmovl  %esp, %ebp      # Set up new base pointer
+  0x046: 501508000000 |     mrmovl  8(%ebp), %ecx   # %ecx = &ls->val
+  0x04c: 6300         |     xorl    %eax, %eax      # val = 0
+  0x04e: 6211         |     andl    %ecx, %ecx      # Set condition codes
+  0x050: 737a000000   |     je      End             # Return if 
+  0x055: 500100000000 |     mrmovl  (%ecx), %eax    # %eax = ls->val
+  0x05b: a00f         |     pushl   %eax            # Save val in stack
+  0x05d: 30f304000000 |     irmovl  $4, %ebx        # %ebx = 4
+  0x063: 6031         |     addl    %ebx, %ecx      # %ecx = &ls->next
+  0x065: 502100000000 |     mrmovl  (%ecx), %edx    # %edx = ls->next
+  0x06b: 2021         |     rrmovl  %edx, %ecx      # %ecx = ls->next
+  0x06d: a01f         |     pushl   %ecx            # ls = ls->next
+  0x06f: 8042000000   |     call    Rsum_List       # Call Rsum_List(ls->next);
+  0x074: b03f         |     popl    %ebx
+  0x076: b03f         |     popl    %ebx
+  0x078: 6030         |     addl    %ebx, %eax
+  0x07a:              | End:
+  0x07a: 2054         |     rrmovl  %ebp, %esp      # Recovery %esp
+  0x07c: b05f         |     popl    %ebp            # Recory %ebp
+  0x07e: 90           |     ret                     # Return
+                      | 
+                      | # The stack starts here and grows to lower addresses
+  0x100:              | 	.pos 0x100		
+  0x100:              | Stack:	 

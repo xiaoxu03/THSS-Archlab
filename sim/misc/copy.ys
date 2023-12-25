@@ -1,0 +1,61 @@
+# Execution begins at address 0 
+	.pos 0 
+init:	
+    irmovl Stack, %esp  	# Set up stack pointer  
+	irmovl Stack, %ebp  	# Set up base pointer   
+	call Main		        # Execute main program
+	halt			        # Terminate program 
+
+# Elements defining the stack
+    .align 4
+# Source block
+src:
+    .long   0x00a
+    .long   0x0b0
+    .long   0xc00
+# Destination block
+dest:
+    .long   0x111
+    .long   0x222
+    .long   0x333
+
+Main:
+    pushl   %ebp            # Save old base pointer
+    rrmovl  %esp, %ebp      # Set up new base pointer
+    irmovl  $3, %edx        # %edx = len
+    pushl   %edx            # len = 3
+    irmovl  dest, %edx      # %edx = &dest
+    pushl   %edx            # dest = &dest
+    irmovl  src, %edx       # %edx = &src
+    pushl   %edx            # src = &src
+    call    Copy_Block      # Sum_List(ele1)
+    rrmovl  %ebp, %esp      # Recovery %esp
+    popl    %ebp            # Recory %ebp
+    ret
+
+    # int copy_block(int *src, int *dest, int len)
+Copy_Block:
+    pushl   %ebp            # Save old base pointer
+    rrmovl  %esp, %ebp      # Set up new base pointer
+    mrmovl  8(%ebp), %ecx   # %ecx = src
+    mrmovl  12(%ebp), %edx  # %edx = dest
+    mrmovl  16(%ebp), %edi  # %edi = len
+Loop:
+    andl    %edi, %edi      # Set condition codes
+    je      End             # Return if %edi = 0
+    mrmovl  (%ecx), %eax    # %eax = src[len - %edi]
+    rmmovl  %eax, (%edx)    # dest[len - %edi] = src[len - %edi]
+    irmovl  $-1, %ebx       # %ebx = -1
+    addl    %ebx, %edi      # %edi = %edi - 1
+    irmovl  $4, %ebx        # %ebx = 4
+    addl    %ebx, %ecx      # %ecx = %ecx + 4
+    addl    %ebx, %edx      # %edx = %edx + 4
+    jmp     Loop
+End:
+    rrmovl  %ebp, %esp      # Recovery %esp
+    popl    %ebp            # Recory %ebp
+    ret                     # Return
+
+# The stack starts here and grows to lower addresses
+	.pos 0x100		
+Stack:	 
