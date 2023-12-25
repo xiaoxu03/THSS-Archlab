@@ -21,14 +21,14 @@
   0x02c:              | Main:
   0x02c: a05f         |     pushl   %ebp            # Save old base pointer
   0x02e: 2045         |     rrmovl  %esp, %ebp      # Set up new base pointer
-  0x030: 30f214000000 |     irmovl  ele1, %edx
-  0x036: a02f         |     pushl   %edx
+  0x030: 30f214000000 |     irmovl  ele1, %edx      # %edx = &ele1
+  0x036: a02f         |     pushl   %edx            # ls = &ele1
   0x038: 8042000000   |     call    Sum_List        # Sum_List(ele1)
   0x03d: 2054         |     rrmovl  %ebp, %esp      # Recovery %esp
   0x03f: b05f         |     popl    %ebp            # Recory %ebp
   0x041: 90           |     ret
                       | 
-                      |     # int Sum_List(list_ptr ls)
+                      |     # int sum_list(list_ptr ls)
   0x042:              | Sum_List:
   0x042: a05f         |     pushl   %ebp            # Save old base pointer
   0x044: 2045         |     rrmovl  %esp, %ebp      # Set up new base pointer

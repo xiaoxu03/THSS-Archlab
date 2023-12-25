@@ -44,9 +44,9 @@
   0x06b: 2021         |     rrmovl  %edx, %ecx      # %ecx = ls->next
   0x06d: a01f         |     pushl   %ecx            # ls = ls->next
   0x06f: 8042000000   |     call    Rsum_List       # Call Rsum_List(ls->next);
-  0x074: b03f         |     popl    %ebx
-  0x076: b03f         |     popl    %ebx
-  0x078: 6030         |     addl    %ebx, %eax
+  0x074: b03f         |     popl    %ebx            # Clear ls->next from stack
+  0x076: b03f         |     popl    %ebx            # %ebx = ls->val
+  0x078: 6030         |     addl    %ebx, %eax      # %eax = val + rest
   0x07a:              | End:
   0x07a: 2054         |     rrmovl  %ebp, %esp      # Recovery %esp
   0x07c: b05f         |     popl    %ebp            # Recory %ebp

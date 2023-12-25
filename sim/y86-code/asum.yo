@@ -14,7 +14,8 @@
   0x01c: 000b0000     | 	.long 0xb00
   0x020: 00a00000     | 	.long 0xa000	
                       | 
-  0x024: a05f         | Main:	pushl %ebp 
+  0x024:              | Main:	
+  0x024: a05f         | 	pushl %ebp 
   0x026: 2045         | 	rrmovl %esp,%ebp
   0x028: 30f004000000 | 	irmovl $4,%eax	
   0x02e: a00f         | 	pushl %eax		# Push 4
@@ -27,7 +28,8 @@
                       | 
                       | /* $begin sum-ys 0 */
                       | 	# int Sum(int *Start, int Count)
-  0x042: a05f         | Sum:	pushl %ebp
+  0x042:              | Sum:	
+  0x042: a05f         | 	pushl %ebp
   0x044: 2045         | 	rrmovl %esp,%ebp
   0x046: 501508000000 | 	mrmovl 8(%ebp),%ecx 	# ecx = Start
   0x04c: 50250c000000 | 	mrmovl 12(%ebp),%edx	# edx = Count
